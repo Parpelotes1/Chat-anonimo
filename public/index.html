@@ -1510,18 +1510,23 @@ const ROTAS = {
   listar: '/api/comentarios',
   criar: '/api/comentarios'
 };
+
 const DADOS = {
-  demo: [],
   async listar() {
     try {
       const r = await fetch(ROTAS.listar, { headers: { Accept: 'application/json' } });
       if (!r.ok) throw new Error('falha');
-      const lista = await r.json();
-      return Array.isArray(lista) ? lista : [];
+      const corpo = await r.json();
+      // O Worker responde { ok: true, comentarios: [...] }
+      if (corpo && Array.isArray(corpo.comentarios)) return corpo.comentarios;
+      // fallback: se algum dia a API devolver array puro
+      if (Array.isArray(corpo)) return corpo;
+      return [];
     } catch (e) {
       return null;
     }
   },
+
   async criar(texto) {
     try {
       const r = await fetch(ROTAS.criar, {
@@ -1530,7 +1535,11 @@ const DADOS = {
         body: JSON.stringify({ texto })
       });
       if (!r.ok) throw new Error('falha');
-      return await r.json();
+      const corpo = await r.json();
+      // O Worker responde { ok: true, comentario: {...} }
+      if (corpo && corpo.comentario) return corpo.comentario;
+      if (corpo && corpo.ok === false) return null;
+      return corpo;
     } catch (e) {
       return null;
     }
