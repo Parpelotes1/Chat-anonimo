@@ -4,7 +4,7 @@
 # ============================================================
  
 # Nome do Worker (aparece no painel e na URL *.workers.dev)
-name = "comentario-anonimo"
+name = "comentario-anonimo-db"
  
 # Arquivo de entrada do Worker (módulo ES)
 main = "src/index.js"
