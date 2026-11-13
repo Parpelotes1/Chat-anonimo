@@ -201,7 +201,24 @@ export default {
     if (caminho.startsWith("/api/")) {
       try {
         // garante que as tabelas existem (roda só na 1ª requisição)
-        await garantirSchema(env);
+         async function garantirSchema(env) {
+  if (schemaGarantido) return;
+  await env.DB.prepare(
+    `CREATE TABLE IF NOT EXISTS comentarios (
+      id        TEXT PRIMARY KEY,
+      texto     TEXT NOT NULL,
+      criado_em TEXT NOT NULL,
+      ip_hash   TEXT
+    )`
+  ).run();
+  await env.DB.prepare(
+    `CREATE INDEX IF NOT EXISTS idx_comentarios_criado_em ON comentarios (criado_em)`
+  ).run();
+  await env.DB.prepare(
+    `CREATE INDEX IF NOT EXISTS idx_comentarios_ip_hash ON comentarios (ip_hash)`
+  ).run();
+  schemaGarantido = true;
+}
  
         // GET /api/comentarios
         if (caminho === "/api/comentarios" && request.method === "GET") {
