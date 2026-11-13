@@ -1,0 +1,38 @@
+# ============================================================
+# wrangler.toml — Comentario Anonimo
+# Configuração do Worker, do banco D1 e dos assets estáticos
+# ============================================================
+ 
+# Nome do Worker (aparece no painel e na URL *.workers.dev)
+name = "comentario-anonimo"
+ 
+# Arquivo de entrada do Worker (módulo ES)
+main = "src/index.js"
+ 
+# Data de compatibilidade: define o comportamento do runtime.
+# Use uma data recente; "2025-11-01" é a data recomendada deste projeto.
+compatibility_date = "2025-11-01"
+ 
+# ------------------------------------------------------------
+# Banco de dados D1 (SQL relacional do Cloudflare)
+# ------------------------------------------------------------
+# O database_id abaixo NÃO pode ser criado por código: é um passo
+# manual. Obtenha-o rodando no terminal:
+#     wrangler d1 create comentario-anonimo-db
+# ...ou criando o banco no painel (Workers & Pages > D1) e copiando
+# o ID que o painel mostra.
+[[d1_databases]]
+binding = "DB"                           # nome do binding no código (env.DB)
+database_name = "comentario-anonimo-db"  # nome do banco criado no D1
+database_id = "24228015-0b21-4c9f-8c2d-a2897ac74b26" # cole aqui o ID gerado
+ 
+# ------------------------------------------------------------
+# Assets estáticos (Workers Static Assets)
+# ------------------------------------------------------------
+# O front (index.html, CSS, JS) fica dentro da pasta ./public.
+# O index.html precisa estar NA RAIZ dessa pasta.
+# Com o binding ASSETS, o Worker pode servir esses arquivos
+# com env.ASSETS.fetch(request).
+[assets]
+directory = "./public"
+binding = "ASSETS"
